@@ -1,5 +1,5 @@
 
-# Ricky Chat | Real-Time MERN Chat App 💬⚡
+# 💬 Ricky Chat | Real-Time MERN Chat App ⚡
 
 A Real-Time MERN Stack Messaging Platform
 
