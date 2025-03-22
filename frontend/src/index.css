@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.input-sm
+{
+    height: 3rem;
+}
+
+.w-10 {
+    width: 3.5rem;
+}
+@media (min-width: 640px) {
+    .sm\:w-12 {
+        width: 4rem;
+    }
+}

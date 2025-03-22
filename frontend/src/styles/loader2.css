@@ -1,0 +1,57 @@
+.loader {
+  width: 48px;
+  height: 48px;
+  position: relative;
+  animation: rotate 1s linear infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader:before,
+.loader:after {
+  content: "";
+  display: block;
+  border: 12px solid;
+  border-color: transparent transparent var(--loader-primary) var(--loader-secondary);
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation: mvx 1s infinite ease-in;
+}
+
+/* Before element (opposite colors for contrast) */
+.loader:before {
+  left: -1px;
+  top: 1px;
+  border-color: var(--loader-secondary) var(--loader-primary) transparent transparent;
+  animation-name: mvrx;
+}
+
+/* Dynamic color variables for light & dark themes */
+:root {
+  --loader-primary: #3498db;  /* Nice blue */
+  --loader-secondary: #e74c3c; /* Modern red */
+}
+
+/* Adjust for dark mode */
+[data-theme="dark"] {
+  --loader-primary: #4db6ac; /* Soft cyan */
+  --loader-secondary: #ffb74d; /* Warm orange */
+}
+
+@keyframes rotate {
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes mvx {
+  0%, 15% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(-50%, 50%) rotate(180deg); }
+  100% { transform: translate(0%, 0%) rotate(180deg); }
+}
+
+@keyframes mvrx {
+  0%, 15% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(50%, -50%) rotate(180deg); }
+  100% { transform: translate(0%, 0%) rotate(180deg); }
+}
