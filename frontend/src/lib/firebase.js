@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCdB8gSWpkEWYBCW576cMeilH7dAUbuoqE",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "ricky-chat-app-d0412.firebaseapp.com",
   projectId: "ricky-chat-app-d0412",
   storageBucket: "ricky-chat-app-d0412.firebasestorage.app",
