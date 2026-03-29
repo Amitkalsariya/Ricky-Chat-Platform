@@ -2,6 +2,10 @@ import express from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
+import groupRoutes from "./routes/group.route.js";
+import notificationRoutes from "./routes/notification.route.js";
+import statusRoutes from "./routes/status.route.js";
+import chatRequestRoutes from "./routes/chatRequest.route.js";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./lib/db.js";
 import bodyParser from "body-parser";
@@ -21,15 +25,32 @@ app.use(bodyParser.urlencoded({ limit: "10mb", extended: true })); // Set the UR
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow your frontend to access
-    credentials: true, // Allow cookies to be sent with requests
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allow specific HTTP methods
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+      // Allow localhost and any IP on typical dev ports
+      if (
+        origin.includes("localhost") ||
+        origin.includes("127.0.0.1") ||
+        origin.match(/^https?:\/\/\d+\.\d+\.\d+\.\d+/) ||
+        origin.includes("5173")
+      ) {
+        return callback(null, true);
+      }
+      callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/groups", groupRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/status", statusRoutes);
+app.use("/api/chat-requests", chatRequestRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
