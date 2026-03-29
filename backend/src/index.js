@@ -33,7 +33,8 @@ app.use(
         origin.includes("localhost") ||
         origin.includes("127.0.0.1") ||
         origin.match(/^https?:\/\/\d+\.\d+\.\d+\.\d+/) ||
-        origin.includes("5173")
+        origin.includes("5173") ||
+        origin.includes("onrender.com") // Support live Render deployment
       ) {
         return callback(null, true);
       }
