@@ -101,8 +101,8 @@ const NotificationPanel = ({ isOpen, onClose }) => {
         <>
             <div
                 ref={panelRef}
-                className="fixed inset-0 sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[400px] bg-base-100 sm:rounded-2xl shadow-2xl sm:border sm:border-base-300/80 overflow-hidden z-50 flex flex-col sm:block sm:max-h-[80vh]"
-                style={{ animation: 'toast-slide-in 0.3s cubic-bezier(0.21, 1.02, 0.73, 1)' }}
+                className="fixed top-[70px] left-3 right-3 sm:absolute sm:top-full sm:left-auto sm:-right-4 sm:w-[400px] bg-base-100 rounded-2xl shadow-2xl border border-base-300/80 overflow-hidden z-50 flex flex-col max-h-[85vh] sm:max-h-[80vh]"
+                style={{ animation: 'toast-slide-in 0.3s cubic-bezier(0.21, 1.02, 0.73, 1)', transformOrigin: 'top right' }}
             >
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-base-300/80 bg-gradient-to-r from-primary/8 via-secondary/5 to-transparent">

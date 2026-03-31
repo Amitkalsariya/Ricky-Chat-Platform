@@ -201,12 +201,17 @@ export const checkAuth = (req, res) => {
 //  GOOGLE AUTH (Login / Sign-up)
 // ───────────────────────────────────────────
 export const googleAuth = async (req, res) => {
-  const { email, fullname, profilePic } = req.body;
+  const { email, fullname, profilePic, googleId } = req.body;
   try {
+    if (!email) {
+      return res.status(400).json({ message: "Google account must have an email" });
+    }
+
     let user = await User.findOne({ email });
     let isNewUser = false;
 
     if (!user) {
+      // CASE B: User does not exist -> Create new user -> Save fields
       isNewUser = true;
       const randomPassword = crypto.randomBytes(16).toString("hex");
       const hashpwd = await bcrypt.hash(randomPassword, 10);
@@ -215,6 +220,8 @@ export const googleAuth = async (req, res) => {
         email,
         password: hashpwd,
         profilePic: profilePic || "",
+        googleId: googleId || "",
+        authType: "google"
       });
       await user.save();
 
@@ -223,6 +230,13 @@ export const googleAuth = async (req, res) => {
       sendEmail(email, "Welcome to Ricky Chat! 🚀", getGoogleWelcomeTemplate(fullname, origin)).catch((err) =>
         console.log("Google welcome email failed:", err.message)
       );
+    } else {
+      // CASE A & Account Linking: User exists -> Log user in
+      // If user signed up via email, just link googleId and keep info intact
+      if (!user.googleId && googleId) {
+        user.googleId = googleId;
+        await user.save();
+      }
     }
 
     gnttoken(user._id, res);
@@ -232,6 +246,7 @@ export const googleAuth = async (req, res) => {
       fullname: user.fullname,
       email: user.email,
       profilePic: user.profilePic,
+      isNewUser // Helps frontend determine the toast message
     });
   } catch (error) {
     console.log("Error in google auth controller:", error);

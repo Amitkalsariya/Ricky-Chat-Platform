@@ -19,6 +19,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    googleId: {
+        type: String,
+        default: ""
+    },
+    authType: {
+        type: String,
+        enum: ["email", "google"],
+        default: "email"
+    },
     // Online/Last Seen
     isOnline: {
         type: Boolean,

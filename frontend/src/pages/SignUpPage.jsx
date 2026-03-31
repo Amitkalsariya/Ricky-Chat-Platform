@@ -83,7 +83,15 @@ const SignUpPage = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      googleAuth({ email: user.email, fullname: user.displayName, profilePic: user.photoURL }, true);
+      if (!user.email) {
+        return toast.error("Google account must have an email address");
+      }
+      googleAuth({ 
+        email: user.email, 
+        fullname: user.displayName, 
+        profilePic: user.photoURL,
+        googleId: user.uid
+      });
     } catch (error) {
       if (error.code !== 'auth/popup-closed-by-user') {
         toast.error("Google authentication failed");

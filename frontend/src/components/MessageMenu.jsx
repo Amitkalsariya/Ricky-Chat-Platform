@@ -8,13 +8,10 @@ import { AuthStore } from '../store/AuthStore';
 import toast from './CustomToast';
 import { createPortal } from 'react-dom';
 
-const MessageMenu = ({ message, onClose, style }) => {
-    const [showForwardModal, setShowForwardModal] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
+const MessageMenu = ({ message, onClose, onOpenForward, onOpenDelete, style }) => {
     const menuRef = useRef(null);
 
-    const { setReplyingTo, toggleStar, deleteMessage, forwardMessage } = ChatStore();
-    const { acceptedContacts } = ChatRequestStore();
+    const { setReplyingTo, toggleStar, deleteMessage } = ChatStore();
     const { authUser } = AuthStore();
 
     const isOwn = message.senderId === authUser._id || message.senderId?._id === authUser._id;
@@ -46,10 +43,10 @@ const MessageMenu = ({ message, onClose, style }) => {
 
     const menuItems = [
         { icon: Reply, label: 'Reply', onClick: handleReply },
-        { icon: Forward, label: 'Forward', onClick: () => setShowForwardModal(true) },
+        { icon: Forward, label: 'Forward', onClick: onOpenForward },
         { icon: isStarred ? StarOff : Star, label: isStarred ? 'Unstar' : 'Star', onClick: handleStar },
         ...(message.text ? [{ icon: Copy, label: 'Copy', onClick: handleCopy }] : []),
-        { icon: Trash2, label: 'Delete', onClick: () => setShowDeleteModal(true), danger: true },
+        { icon: Trash2, label: 'Delete', onClick: onOpenDelete, danger: true },
     ];
 
     return (
@@ -84,29 +81,6 @@ const MessageMenu = ({ message, onClose, style }) => {
                 </div>,
                 document.body
             )}
-
-            {/* Forward Modal */}
-            {showForwardModal && (
-                <ForwardModal
-                    message={message}
-                    onClose={() => {
-                        setShowForwardModal(false);
-                        onClose();
-                    }}
-                    users={acceptedContacts}
-                    forwardMessage={forwardMessage}
-                />
-            )}
-
-            {/* Delete Modal */}
-            {showDeleteModal && (
-                <DeleteModal
-                    isOwn={isOwn}
-                    onDeleteForMe={() => handleDelete(false)}
-                    onDeleteForEveryone={() => handleDelete(true)}
-                    onClose={() => setShowDeleteModal(false)}
-                />
-            )}
         </>
     );
 };
@@ -136,8 +110,8 @@ const ForwardModal = ({ message, onClose, users, forwardMessage }) => {
         onClose();
     };
 
-    return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-[100] sm:p-4">
+    return createPortal(
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-[110] sm:p-4">
             <div className="bg-base-100 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md max-h-[80vh] overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col">
                 <div className="flex items-center justify-between p-4 border-b border-base-300 flex-shrink-0">
                     <div className="flex items-center gap-3">
@@ -200,14 +174,14 @@ const ForwardModal = ({ message, onClose, users, forwardMessage }) => {
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
-// Delete Modal Component
 const DeleteModal = ({ isOwn, onDeleteForMe, onDeleteForEveryone, onClose }) => {
-    return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-[100] sm:p-4">
+    return createPortal(
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-[110] sm:p-4">
             <div className="bg-base-100 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-sm overflow-hidden animate-in fade-in zoom-in duration-200">
                 <div className="p-6">
                     <h3 className="font-bold text-lg mb-2">Delete Message?</h3>
@@ -243,15 +217,29 @@ const DeleteModal = ({ isOwn, onDeleteForMe, onDeleteForEveryone, onClose }) => 
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
 // Message menu trigger button — calculates position and renders menu via portal
 export const MessageMenuButton = ({ message, position }) => {
     const [showMenu, setShowMenu] = useState(false);
+    const [showForward, setShowForward] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
     const [menuStyle, setMenuStyle] = useState({});
     const buttonRef = useRef(null);
+
+    const { deleteMessage, forwardMessage } = ChatStore();
+    const { acceptedContacts } = ChatRequestStore();
+    const { authUser } = AuthStore();
+    
+    const isOwn = message.senderId === authUser._id || message.senderId?._id === authUser._id;
+
+    const handleDelete = async (forEveryone) => {
+        await deleteMessage(message._id, forEveryone);
+        setShowDelete(false);
+    };
 
     const calculatePosition = useCallback(() => {
         if (!buttonRef.current) return;
@@ -312,6 +300,32 @@ export const MessageMenuButton = ({ message, position }) => {
                     message={message}
                     onClose={() => setShowMenu(false)}
                     style={menuStyle}
+                    onOpenForward={() => {
+                        setShowMenu(false);
+                        setShowForward(true);
+                    }}
+                    onOpenDelete={() => {
+                        setShowMenu(false);
+                        setShowDelete(true);
+                    }}
+                />
+            )}
+
+            {showForward && (
+                <ForwardModal
+                    message={message}
+                    onClose={() => setShowForward(false)}
+                    users={acceptedContacts}
+                    forwardMessage={forwardMessage}
+                />
+            )}
+
+            {showDelete && (
+                <DeleteModal
+                    isOwn={isOwn}
+                    onDeleteForMe={() => handleDelete(false)}
+                    onDeleteForEveryone={() => handleDelete(true)}
+                    onClose={() => setShowDelete(false)}
                 />
             )}
         </div>

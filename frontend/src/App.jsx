@@ -42,9 +42,26 @@ const App = () => {
   if (isCheckingAuth && !authUser)
     return (
       <div className="flex items-center justify-center h-screen bg-base-100" data-theme={theme}>
-        <div className="flex flex-col items-center gap-4">
-          <span className="loader"></span>
-          <p className="text-base-content/50 text-sm animate-pulse">Loading Ricky...</p>
+        <div className="ricky-loader">
+          {/* Animated ring with logo */}
+          <div className="ricky-loader-ring">
+            <div className="ricky-loader-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+            </div>
+          </div>
+          {/* Brand text + animated dots */}
+          <div className="ricky-loader-text">
+            <span className="ricky-loader-brand">Ricky Chat</span>
+            <span className="ricky-loader-status">Loading your conversations</span>
+            <div className="ricky-loader-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
         </div>
       </div>
     );

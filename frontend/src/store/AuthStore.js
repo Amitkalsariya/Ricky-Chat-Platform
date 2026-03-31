@@ -91,14 +91,18 @@ export const AuthStore = create((set, get) => ({
       set({ isUpdatingProfile: false });
     }
   },
-  
+
   // New Auth Methods
-  googleAuth: async (data, isSignUp = false) => {
+  googleAuth: async (data) => {
     set({ isGoogleAuthLoding: true });
     try {
       const res = await aixosIns.post("/auth/google", data);
       set({ authUser: res.data });
-      toast.success(isSignUp ? "🎉 Account created with Google!" : "Logged in with Google successfully");
+      if (res.data.isNewUser) {
+        toast.success("Account has been created with Google");
+      } else {
+        toast.success(`Authenticated as ${res.data.email}`);
+      }
       get().connectSocket();
     } catch (error) {
       toast.error(error.response?.data?.message || "Google authentication failed");

@@ -124,7 +124,7 @@ const StarredMessages = ({ isOpen, onClose }) => {
                                                     <div className="flex items-center gap-2 bg-base-200 rounded-lg px-3 py-2">
                                                         <Mic className="size-4 text-primary" />
                                                         <span className="text-sm text-base-content/70">
-                                                            Voice message • {Math.floor(message.voiceNote.duration / 60)}:{String(message.voiceNote.duration % 60).padStart(2, '0')}
+                                                            Voice message • {Math.floor((message.voiceNote.duration || 0) / 60)}:{String(Math.floor((message.voiceNote.duration || 0) % 60)).padStart(2, '0')}
                                                         </span>
                                                     </div>
                                                 ) : (

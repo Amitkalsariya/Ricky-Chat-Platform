@@ -10,6 +10,8 @@ import {
   PhoneIncoming,
   Maximize2,
   Minimize2,
+  Volume2,
+  Volume1,
 } from "lucide-react";
 import { CallStore } from "../store/CallStore";
 import { ChatRequestStore } from "../store/ChatRequestStore";
@@ -120,21 +122,31 @@ export const CallScreen = () => {
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isSpeakerOn, setIsSpeakerOn] = useState(true);
 
   const userInfo = acceptedContacts.find((c) => c._id === remoteUser?._id) || remoteUser;
 
-  // Attach streams to video elements
+  // Attach streams to video elements and force playback
   useEffect(() => {
     if (localVideoRef.current && localStream) {
       localVideoRef.current.srcObject = localStream;
+      localVideoRef.current.play().catch(e => console.warn("Local play error:", e));
     }
   }, [localStream]);
 
   useEffect(() => {
     if (remoteVideoRef.current && remoteStream) {
       remoteVideoRef.current.srcObject = remoteStream;
+      remoteVideoRef.current.play().catch(e => console.warn("Remote play error:", e));
     }
   }, [remoteStream]);
+
+  // Handle fake speaker effect on unsupported mobile devices
+  useEffect(() => {
+    if (remoteVideoRef.current) {
+        remoteVideoRef.current.volume = isSpeakerOn ? 1.0 : 0.3;
+    }
+  }, [isSpeakerOn]);
 
   // Only show for outgoing calling or connected states
   if (callStatus !== "calling" && callStatus !== "connected") return null;
@@ -178,13 +190,13 @@ export const CallScreen = () => {
     <div className="fixed inset-0 bg-gray-950 z-[200] flex flex-col">
       {/* Video Area */}
       {isVideo ? (
-        <div className="flex-1 relative">
-          {/* Remote video (full screen) */}
+        <div className="flex-1 relative bg-black flex items-center justify-center">
+          {/* Remote video (full screen on mobile, contained on desktop) */}
           <video
             ref={remoteVideoRef}
             autoPlay
             playsInline
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover sm:object-contain"
           />
 
           {/* Fallback avatar when no video */}
@@ -203,7 +215,7 @@ export const CallScreen = () => {
           )}
 
           {/* Local video PiP */}
-          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-28 sm:w-36 aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl ring-2 ring-white/20">
+          <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-28 sm:w-36 aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl ring-2 ring-white/20 z-[50] bg-gray-900 cursor-move">
             {!isCameraOff ? (
               <video
                 ref={localVideoRef}
@@ -241,8 +253,8 @@ export const CallScreen = () => {
             </p>
           </div>
 
-          {/* Hidden audio element */}
-          <audio ref={remoteVideoRef} autoPlay />
+          {/* Hidden audio element with playsInline */}
+          <audio ref={remoteVideoRef} autoPlay playsInline />
         </div>
       )}
 
@@ -272,6 +284,18 @@ export const CallScreen = () => {
             }`}
           >
             {isMuted ? <MicOff className="size-6" /> : <Mic className="size-6" />}
+          </button>
+
+          {/* Speaker Toggle */}
+          <button
+            onClick={() => setIsSpeakerOn(!isSpeakerOn)}
+            className={`size-14 sm:size-16 rounded-full flex items-center justify-center transition-all duration-200 ${
+              isSpeakerOn
+                ? "bg-white/15 text-white hover:bg-white/25 backdrop-blur-sm"
+                : "bg-white text-gray-900 shadow-lg shadow-white/20"
+            }`}
+          >
+            {isSpeakerOn ? <Volume2 className="size-6" /> : <Volume1 className="size-6" />}
           </button>
 
           {/* Camera toggle (video calls only) */}

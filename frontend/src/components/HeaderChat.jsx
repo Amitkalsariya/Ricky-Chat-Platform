@@ -54,7 +54,7 @@ const HeaderChat = () => {
   };
 
   return (
-    <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-base-200/80 flex-shrink-0 bg-base-100 backdrop-blur-lg relative z-20">
+    <div className="px-3 sm:px-4 py-2 sm:py-3 bg-base-100/95 backdrop-blur-xl flex-shrink-0 relative z-20 shadow-[0_4px_30px_rgba(0,0,0,0.03)] border-b border-base-content/5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0">
           {/* Back button on mobile */}

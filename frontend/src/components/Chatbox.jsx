@@ -44,10 +44,10 @@ const Chatbox = () => {
   }, [selectedUser._id, getMessages, AllowToMessage, DisalllowFromMessage, markAllAsRead]);
 
   useEffect(() => {
-    if (messageEndRef.current && messages) {
+    if (messageEndRef.current && (messages || isTyping)) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, isTyping]);
 
   const openImageModal = (imageUrl) => {
     setSelectedImage(imageUrl);
@@ -304,20 +304,39 @@ const Chatbox = () => {
 
         {/* Typing Indicator */}
         {isTyping && (
-          <div className="flex items-end gap-2 mt-2">
+          <div className="flex items-end gap-2 mt-3 animate-[fadeSlideUp_300ms_ease-out]">
             <img
               src={selectedUser.profilePic || "/avatar.png"}
               alt="Profile"
               className="size-8 sm:size-10 rounded-full object-cover flex-shrink-0"
             />
-            <div className="bg-base-200 rounded-2xl rounded-bl-sm px-4 py-3">
-              <div className="flex items-center gap-1">
-                <span className="size-2 bg-base-content/40 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
-                <span className="size-2 bg-base-content/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
-                <span className="size-2 bg-base-content/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
+            <div className="bg-base-200/80 backdrop-blur-sm rounded-2xl rounded-bl-sm px-4 py-2.5 shadow-sm border border-base-300/40">
+              <div className="flex items-center gap-2.5">
+                <div className="flex items-end gap-[3px] h-4">
+                  <span className="w-[7px] h-[7px] rounded-full bg-primary/70" style={{ animation: 'typingWave 1.2s ease-in-out infinite', animationDelay: '0ms' }} />
+                  <span className="w-[7px] h-[7px] rounded-full bg-primary/50" style={{ animation: 'typingWave 1.2s ease-in-out infinite', animationDelay: '150ms' }} />
+                  <span className="w-[7px] h-[7px] rounded-full bg-primary/30" style={{ animation: 'typingWave 1.2s ease-in-out infinite', animationDelay: '300ms' }} />
+                </div>
+                <span className="text-[11px] font-medium text-base-content/40 tracking-wide">
+                  {selectedUser.fullname?.split(' ')[0]} is typing
+                </span>
               </div>
             </div>
           </div>
+        )}
+
+        {/* Typing animation keyframes */}
+        {isTyping && (
+          <style>{`
+            @keyframes typingWave {
+              0%, 60%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
+              30% { transform: translateY(-8px) scale(1.15); opacity: 1; }
+            }
+            @keyframes fadeSlideUp {
+              from { opacity: 0; transform: translateY(8px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+          `}</style>
         )}
       </div>
 

@@ -203,14 +203,14 @@ export const CreateStatusModal = ({ isOpen, onClose }) => {
                         <>
                             {/* Text Preview */}
                             <div
-                                className="relative aspect-[9/16] max-h-[300px] rounded-xl overflow-hidden mb-4 flex items-center justify-center p-6"
+                                className="relative w-full h-[350px] sm:h-[400px] rounded-xl overflow-hidden mb-4 flex items-center justify-center p-6 shadow-inner"
                                 style={{ backgroundColor }}
                             >
                                 <textarea
                                     value={text}
                                     onChange={(e) => setText(e.target.value)}
                                     placeholder="Type a status..."
-                                    className="bg-transparent text-white text-xl sm:text-2xl font-medium text-center w-full h-full resize-none outline-none placeholder:text-white/50"
+                                    className="bg-transparent text-white text-2xl sm:text-3xl font-bold text-center w-full h-full resize-none outline-none placeholder:text-white/60"
                                     maxLength={500}
                                 />
                             </div>
@@ -237,24 +237,26 @@ export const CreateStatusModal = ({ isOpen, onClose }) => {
                             {!imagePreview ? (
                                 <button
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="w-full aspect-[9/16] max-h-[300px] rounded-xl border-2 border-dashed border-base-300 flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-base-200 transition-colors"
+                                    className="w-full h-[350px] sm:h-[400px] rounded-xl border-2 border-dashed border-base-300 flex flex-col items-center justify-center gap-4 hover:border-primary hover:bg-base-200 transition-colors shadow-sm"
                                 >
-                                    <Camera className="size-12 text-base-content/40" />
-                                    <span className="text-base-content/60">Click to upload photo</span>
+                                    <div className="size-16 rounded-full bg-base-200/50 flex items-center justify-center">
+                                        <Camera className="size-8 text-base-content/40" />
+                                    </div>
+                                    <span className="text-base-content/60 font-medium">Click to upload photo</span>
                                 </button>
                             ) : (
-                                <div className="relative aspect-[9/16] max-h-[300px] rounded-xl overflow-hidden mb-4">
+                                <div className="relative w-full h-[350px] sm:h-[400px] rounded-xl overflow-hidden mb-4 bg-base-200/50 shadow-inner">
                                     <img
                                         src={imagePreview}
                                         alt="Preview"
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-contain"
                                     />
                                     <button
                                         onClick={() => {
                                             setImage(null);
                                             setImagePreview(null);
                                         }}
-                                        className="absolute top-2 right-2 p-2 bg-black/50 rounded-full text-white hover:bg-black/70"
+                                        className="absolute top-3 right-3 p-2 bg-black/60 backdrop-blur-sm rounded-full text-white hover:bg-black/80 transition-colors shadow-lg"
                                     >
                                         <X className="size-4" />
                                     </button>

@@ -1,60 +1,162 @@
-.loader {
-  animation: rotate 1s infinite;
-  height: 50px;
-  width: 50px;
+/* ═══════════════════════════════════════════
+   Ricky Chat — Premium Loading Screen
+   ═══════════════════════════════════════════ */
+
+/* Container */
+.ricky-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
 }
-.loader:before,
-.loader:after {
+
+/* ── Animated Logo Ring ── */
+.ricky-loader-ring {
+  position: relative;
+  width: 88px;
+  height: 88px;
+}
+
+/* Outer spinning gradient ring */
+.ricky-loader-ring::before {
   content: "";
-  display: block;
-  height: 20px;
-  width: 20px;
-}
-.loader:before {
-  animation: box1 1s infinite;
-  background-color: #000;
-  box-shadow: 30px 0 0 #ff3d00;
-  margin-bottom: 10px;
-}
-.loader:after {
-  animation: box2 1s infinite;
-  background-color: #ff3d00;
-  box-shadow: 30px 0 0 #000;
-}
-
-@keyframes rotate {
-  0% { transform: rotate(0deg) scale(0.8) }
-  50% { transform: rotate(360deg) scale(1.2) }
-  100% { transform: rotate(720deg) scale(0.8) }
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 3px;
+  background: conic-gradient(
+    from 0deg,
+    oklch(var(--p)),
+    oklch(var(--s)),
+    oklch(var(--a)),
+    oklch(var(--p))
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: ricky-spin 1.4s linear infinite;
 }
 
-@keyframes box1 {
-  0% {
-    box-shadow: 30px 0 0 #ff3d00;
+/* Pulsing glow behind the ring */
+.ricky-loader-ring::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    oklch(var(--p) / 0.25),
+    oklch(var(--s) / 0.15),
+    oklch(var(--a) / 0.25),
+    oklch(var(--p) / 0.25)
+  );
+  filter: blur(16px);
+  animation: ricky-spin 1.4s linear infinite, ricky-pulse-glow 2s ease-in-out infinite;
+  z-index: -1;
+}
+
+/* Inner logo container */
+.ricky-loader-icon {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: oklch(var(--b1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: ricky-breathe 2s ease-in-out infinite;
+}
+
+.ricky-loader-icon svg {
+  width: 28px;
+  height: 28px;
+  color: oklch(var(--p));
+  filter: drop-shadow(0 0 8px oklch(var(--p) / 0.4));
+}
+
+/* ── Text Section ── */
+.ricky-loader-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ricky-loader-brand {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, oklch(var(--p)), oklch(var(--s)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ricky-loader-status {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: oklch(var(--bc) / 0.4);
+  letter-spacing: 0.04em;
+}
+
+/* ── Bouncing Dots ── */
+.ricky-loader-dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 0.125rem;
+}
+
+.ricky-loader-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: oklch(var(--p));
+  animation: ricky-dot-bounce 1.2s ease-in-out infinite;
+}
+
+.ricky-loader-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+  background: oklch(var(--s));
+}
+
+.ricky-loader-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+  background: oklch(var(--a));
+}
+
+/* ── Keyframes ── */
+@keyframes ricky-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ricky-breathe {
+  0%, 100% {
+    transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 0 #ff3d00;
-    margin-bottom: 0;
-    transform: translate(15px, 15px);
-  }
-  100% {
-    box-shadow: 30px 0 0 #ff3d00;
-    margin-bottom: 10px;
+    transform: scale(0.96);
   }
 }
 
-@keyframes box2 {
-  0% {
-    box-shadow: 30px 0 0 #000;
+@keyframes ricky-pulse-glow {
+  0%, 100% {
+    opacity: 0.5;
   }
   50% {
-    box-shadow: 0 0 0 #000;
-    margin-top: -20px;
-    transform: translate(15px, 15px);
-  }
-  100% {
-    box-shadow: 30px 0 0 #000;
-    margin-top: 0;
+    opacity: 1;
   }
 }
-  
+
+@keyframes ricky-dot-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}
